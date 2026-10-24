@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Distribución normal · Distribuciones de probabilidad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<link rel="stylesheet" href="../assets/style.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script defer src="../assets/dist.js"></script>
+</head>
+<body>
+<header class="site-head"><a href="../index.html">Distribuciones de probabilidad</a> / Continuas</header>
+
+<main>
+<h1>Distribución normal</h1>
+<p class="lede">La notación \(X \sim N(\mu, \sigma^2)\) indica que la variable aleatoria \(X\) sigue una distribución normal con media \(\mu\) y varianza \(\sigma^2\).</p>
+
+<section class="wide">
+  <div class="controls">
+    <fieldset>
+      <legend><span class="swatch"></span>Curva 1</legend>
+      <label class="slider"><i>μ</i> <input type="range" id="mu1" min="-3" max="9" step="0.1" value="3"><output id="mu1o"></output></label>
+      <label class="slider"><i>σ</i> <input type="range" id="s1" min="0.3" max="4" step="0.1" value="1"><output id="s1o"></output></label>
+    </fieldset>
+    <fieldset>
+      <legend><input type="checkbox" id="show2" checked aria-label="Mostrar curva 2"><span class="swatch c2"></span>Curva 2</legend>
+      <label class="slider"><i>μ</i> <input type="range" id="mu2" min="-3" max="9" step="0.1" value="3"><output id="mu2o"></output></label>
+      <label class="slider"><i>σ</i> <input type="range" id="s2" min="0.3" max="4" step="0.1" value="2"><output id="s2o"></output></label>
+    </fieldset>
+  </div>
+
+  <div class="plot" id="plotPdf"></div>
+
+  <div class="calc">
+    <span>Para la curva 1:</span>
+    P( <input type="number" id="a" value="2" step="0.1" aria-label="Límite inferior a"> &lt; X &lt;
+    <input type="number" id="b" value="4" step="0.1" aria-label="Límite superior b"> ) =
+    <output id="prob"></output>
+  </div>
+  <p class="note" id="zinfo"></p>
+</section>
+
+<h2>Parámetros y soporte</h2>
+<p>La distribución tiene dos parámetros: \(\mu\), con \(-\infty &lt; \mu &lt; \infty\), que fija la posición del centro, y \(\sigma &gt; 0\), que fija la dispersión. El soporte es toda la recta real, \(-\infty &lt; x &lt; \infty\). Al mover \(\mu\) la curva se desplaza sin cambiar de forma; al aumentar \(\sigma\) se ensancha y su altura máxima baja, porque el área total siempre es 1.</p>
+
+<h2>Función de densidad</h2>
+$$f(x) = \frac{1}{\sqrt{2\pi}\,\sigma}\, e^{-\frac{(x-\mu)^2}{2\sigma^2}}, \qquad -\infty &lt; x &lt; \infty.$$
+<p>La densidad es simétrica respecto de \(\mu\), alcanza su máximo \(1/(\sigma\sqrt{2\pi})\) en \(x = \mu\) y tiene puntos de inflexión en \(\mu \pm \sigma\).</p>
+
+<h2>Función de distribución acumulada</h2>
+$$F(x) = P(X \le x) = \frac{1}{2}\left[1 + \operatorname{erf}\!\left(\frac{x-\mu}{\sqrt{2}\,\sigma}\right)\right], \qquad -\infty &lt; x &lt; \infty,$$
+<p>donde la función error es</p>
+$$\operatorname{erf}(x) = \frac{2}{\sqrt{\pi}} \int_0^x e^{-t^2}\,dt, \qquad \operatorname{erf}(-x) = -\operatorname{erf}(x).$$
+<p>Esta integral no tiene forma cerrada elemental. En la práctica se estandariza con \(Z = (X-\mu)/\sigma \sim N(0,1)\) y se usa \(F(x) = \Phi\big((x-\mu)/\sigma\big)\), donde \(\Phi\) es la acumulada de la normal estándar (la que aparece en las tablas).</p>
+
+<section class="wide">
+  <div class="seg" role="group" aria-label="Función a graficar">
+    <button type="button" data-f="cdf" aria-pressed="true">Acumulada F(x)</button>
+    <button type="button" data-f="sf" aria-pressed="false">Supervivencia S(x)</button>
+    <button type="button" data-f="hazard" aria-pressed="false">Riesgo h(x)</button>
+    <button type="button" data-f="quantile" aria-pressed="false">Cuantil F⁻¹(u)</button>
+  </div>
+  <div class="plot" id="plotFun"></div>
+  <p class="note">Usa los mismos parámetros de las curvas de arriba.</p>
+</section>
+
+<h2>Función de supervivencia</h2>
+$$S(x) = P(X \ge x) = 1 - F(x) = \frac{1}{2}\left[1 - \operatorname{erf}\!\left(\frac{x-\mu}{\sqrt{2}\,\sigma}\right)\right].$$
+
+<h2>Función de riesgo</h2>
+$$h(x) = \frac{f(x)}{S(x)} = \frac{\sqrt{2}\; e^{-\frac{(x-\mu)^2}{2\sigma^2}}}{\sigma\sqrt{\pi}\left[1 - \operatorname{erf}\!\left(\frac{x-\mu}{\sqrt{2}\,\sigma}\right)\right]}.$$
+<p>La función de riesgo de la normal es creciente. Para valores grandes de \(x\) es difícil de calcular directamente, porque tanto \(f(x)\) como \(S(x)\) se vuelven muy pequeños y su cociente pierde precisión. La solución habitual es trabajar en escala logarítmica, como se muestra en el código al final. La función de riesgo acumulado, \(H(x) = -\ln S(x)\), no tiene una expresión cerrada manejable.</p>
+
+<h2>Función cuantil</h2>
+$$F^{-1}(u) = \mu + \sigma\sqrt{2}\,\operatorname{erf}^{-1}(2u - 1), \qquad 0 &lt; u &lt; 1.$$
+<p>La mediana y la moda coinciden con la media: las tres valen \(\mu\).</p>
+
+<h2>Funciones generadoras</h2>
+<p>La función generadora de momentos y la función característica son</p>
+$$M(t) = E\!\left[e^{tX}\right] = e^{\mu t + \sigma^2 t^2/2}, \qquad -\infty &lt; t &lt; \infty,$$
+$$\varphi(t) = E\!\left[e^{itX}\right] = e^{i\mu t - \sigma^2 t^2/2}, \qquad -\infty &lt; t &lt; \infty.$$
+
+<h2>Momentos</h2>
+<div class="table-wrap">
+<table>
+  <caption>Tabla 1. Momentos poblacionales de \(X \sim N(\mu, \sigma^2)\)</caption>
+  <thead><tr><th>Medida</th><th>Expresión</th><th>Valor</th></tr></thead>
+  <tbody>
+    <tr><td>Media</td><td>\(E[X]\)</td><td>\(\mu\)</td></tr>
+    <tr><td>Varianza</td><td>\(V[X]\)</td><td>\(\sigma^2\)</td></tr>
+    <tr><td>Asimetría</td><td>\(E\big[((X-\mu)/\sigma)^3\big]\)</td><td>\(0\)</td></tr>
+    <tr><td>Curtosis</td><td>\(E\big[((X-\mu)/\sigma)^4\big]\)</td><td>\(3\)</td></tr>
+  </tbody>
+</table>
+</div>
+<p>Como la curtosis de la normal es 3, muchos programas informan el <em>exceso de curtosis</em> (curtosis − 3), que vale 0 para la normal y sirve como referencia para comparar otras distribuciones.</p>
+
+<h2>Usos</h2>
+<p>La normal se usa para modelar variables como la estatura de adultos, el peso de recién nacidos o el diámetro de piezas fabricadas, como rodamientos. Su importancia se explica por el teorema central del límite: una variable que puede pensarse como la suma de muchas variables aleatorias independientes tiende a tener distribución aproximadamente normal. Por eso también es la base de gran parte de la inferencia estadística, como los intervalos de confianza y las pruebas de hipótesis para medias.</p>
+<p>También sirve para aproximar otras distribuciones. La binomial se aproxima bien por una normal cuando \(n\) es grande y \(p\) está cerca de 1/2. La Poisson se aproxima bien cuando su media es grande: \(\mu &gt; 10\) da una buena aproximación y \(\mu &gt; 20\) una mejor. En ambos casos conviene usar la corrección por continuidad, porque se aproxima una variable discreta con una continua.</p>
+
+<h2>En R y Python</h2>
+<p>Ojo con la parametrización: tanto R como <code>scipy</code> usan la desviación estándar \(\sigma\), no la varianza \(\sigma^2\).</p>
+<div class="tabs">
+  <div class="seg" role="tablist">
+    <button type="button" role="tab" aria-selected="true">R</button>
+    <button type="button" role="tab" aria-selected="false">Python</button>
+  </div>
+  <div role="tabpanel"><pre><code># X ~ N(3, 4): mu = 3, sigma = 2
+dnorm(4, mean = 3, sd = 2)                       # f(4)
+pnorm(4, mean = 3, sd = 2)                       # F(4) = P(X &lt;= 4)
+pnorm(4, mean = 3, sd = 2, lower.tail = FALSE)   # S(4) = P(X &gt;= 4)
+qnorm(0.95, mean = 3, sd = 2)                    # cuantil 0,95
+rnorm(100, mean = 3, sd = 2)                     # 100 valores simulados
+
+# P(2 &lt; X &lt; 4)
+pnorm(4, 3, 2) - pnorm(2, 3, 2)
+
+# Función de riesgo estable en escala logarítmica
+h &lt;- function(x, mu, sigma) {
+  exp(dnorm(x, mu, sigma, log = TRUE) -
+      pnorm(x, mu, sigma, lower.tail = FALSE, log.p = TRUE))
+}
+h(40, 0, 1)</code></pre></div>
+  <div role="tabpanel" hidden><pre><code>import numpy as np
+from scipy.stats import norm
+
+# X ~ N(3, 4): loc = mu = 3, scale = sigma = 2
+X = norm(loc=3, scale=2)
+X.pdf(4)          # f(4)
+X.cdf(4)          # F(4) = P(X &lt;= 4)
+X.sf(4)           # S(4) = P(X &gt;= 4)
+X.ppf(0.95)       # cuantil 0,95
+X.rvs(size=100)   # 100 valores simulados
+
+# P(2 &lt; X &lt; 4)
+X.cdf(4) - X.cdf(2)
+
+# Función de riesgo estable en escala logarítmica
+def h(x, mu, sigma):
+    return np.exp(norm.logpdf(x, mu, sigma) - norm.logsf(x, mu, sigma))
+
+h(40, 0, 1)</code></pre></div>
+</div>
+
+<h2>Fuente</h2>
+<p>Basado en la ficha de la distribución normal del <a href="http://www.math.wm.edu/~leemis/chart/UDR/UDR.html">Univariate Distribution Relationships</a> de L. Leemis (College of William &amp; Mary).</p>
+</main>
+
+<footer class="site-foot">Elaborado por Martín Soto Cabezas.</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const $ = id => document.getElementById(id);
+  const ids = ['mu1', 's1', 'mu2', 's2'];
+  const XLIM = [-6, 12];
+  let fun = 'cdf';
+
+  const curves = () => {
+    const c = [{ m: +$('mu1').value, s: +$('s1').value, cls: 'c1' }];
+    if ($('show2').checked) c.push({ m: +$('mu2').value, s: +$('s2').value, cls: 'c2' });
+    return c.map(k => ({ ...k, label: `μ = ${fmt(k.m, 1)}, σ = ${fmt(k.s, 1)}` }));
+  };
+
+  function update() {
+    ids.forEach(id => $(id + 'o').value = fmt(+$(id).value, 1));
+    ['mu2', 's2'].forEach(id => $(id).disabled = !$('show2').checked);
+    const cs = curves(), xs = seq(XLIM[0], XLIM[1], 500);
+
+    let a = +$('a').value, b = +$('b').value;
+    if (a > b) [a, b] = [b, a];
+    const { m, s } = cs[0];
+    const xsh = seq(Math.max(a, XLIM[0]), Math.min(b, XLIM[1]), 200);
+    const peak = Math.max(...cs.map(c => Normal.pdf(c.m, c.m, c.s)));
+    drawPlot($('plotPdf'), {
+      title: 'Figura 1. Función de densidad de X ~ N(μ, σ²)',
+      xlabel: 'x', ylabel: 'f(x)', xlim: XLIM, ylim: [0, Math.max(0.45, peak * 1.12)],
+      series: cs.map(c => ({ x: xs, y: xs.map(x => Normal.pdf(x, c.m, c.s)), cls: c.cls, label: c.label })),
+      shade: b > XLIM[0] && a < XLIM[1] ? { x: xsh, y: xsh.map(x => Normal.pdf(x, m, s)) } : null
+    });
+    $('prob').value = fmt(Normal.cdf(b, m, s) - Normal.cdf(a, m, s), 4);
+    $('zinfo').textContent = `Estandarizando: z(a) = ${fmt((a - m) / s, 2)} y z(b) = ${fmt((b - m) / s, 2)}, por lo que la probabilidad es Φ(z(b)) − Φ(z(a)).`;
+
+    let opt;
+    if (fun === 'quantile') {
+      const us = seq(0.001, 0.999, 500);
+      const ser = cs.map(c => ({ x: us, y: us.map(u => Normal.quantile(u, c.m, c.s)), cls: c.cls, label: c.label }));
+      const all = ser.flatMap(se => se.y);
+      opt = { title: 'Figura 2. Función cuantil de X ~ N(μ, σ²)', xlabel: 'u', ylabel: 'F⁻¹(u)',
+              xlim: [0, 1], ylim: [Math.min(...all), Math.max(...all)], series: ser };
+    } else {
+      const f = Normal[fun].bind(Normal);
+      const ser = cs.map(c => ({ x: xs, y: xs.map(x => f(x, c.m, c.s)), cls: c.cls, label: c.label }));
+      const names = { cdf: ['acumulada', 'F(x)'], sf: ['de supervivencia', 'S(x)'], hazard: ['de riesgo', 'h(x)'] };
+      const ymax = fun === 'hazard' ? Math.max(...ser.flatMap(se => se.y)) * 1.05 : 1;
+      opt = { title: `Figura 2. Función ${names[fun][0]} de X ~ N(μ, σ²)`, xlabel: 'x', ylabel: names[fun][1],
+              xlim: XLIM, ylim: [0, ymax], series: ser };
+    }
+    drawPlot($('plotFun'), opt);
+  }
+
+  [...ids, 'a', 'b', 'show2'].forEach(id => $(id).addEventListener('input', update));
+  document.querySelectorAll('[data-f]').forEach(btn => btn.addEventListener('click', () => {
+    fun = btn.dataset.f;
+    document.querySelectorAll('[data-f]').forEach(x => x.setAttribute('aria-pressed', x === btn));
+    update();
+  }));
+  update();
+});
+</script>
+</body>
+</html>
